@@ -1,5 +1,5 @@
 import './App.css';
-import './Components/timeForm'
+import TimeForm from './Components/TimeForm';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         </div>
       </div>
 
-    <timeEntry></timeEntry>
+    <TimeForm/>
 
     </div>
   );
