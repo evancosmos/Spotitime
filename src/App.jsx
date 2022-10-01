@@ -6,9 +6,9 @@ function App() {
   const [data, setData] = useState("User");
 
   function handleFetch(){
-    fetch('http://localhost:9000/api')
+    fetch('http://localhost:9000/login')
       .then(dataGet => dataGet.json())
-      .then((dataGet) => setData(dataGet["name"]));
+      .then((dataGet) => setData(dataGet["token"]));
   }
 
   useEffect(() => {
