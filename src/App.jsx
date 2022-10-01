@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import TimeForm from './Components/TimeForm';
+import SpotifyWebApi from 'spotify-web-api-js';
+const spotify = new SpotifyWebApi;
 
 function App() {
-  const [data, setData] = useState("User");
 
-  function handleFetch(){
-    fetch('http://localhost:9000/login')
+  const [token, setToken] = useState("");
+
+  function fetchData(){
+    fetch('http://localhost:9000/login', {
+      headers: {
+        'Access-Control-Allow-Origin' : '*'
+      }
+    })
       .then(dataGet => dataGet.json())
-      .then((dataGet) => setData(dataGet["token"]));
+      .then((dataGet) => setToken(dataGet["token"]));
   }
 
   useEffect(() => {
@@ -17,8 +24,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className='WelcomeHead' onClick={() => handleFetch()}>
-        Welcome to Spotitime {data}
+      <div className='WelcomeHead' onClick={() => fetchData()}>
+        Welcome to Spotitime {token}
         <div className='WelcomeSub'>
           Enter in a time, and we'll make queue up music for that long
         </div>
