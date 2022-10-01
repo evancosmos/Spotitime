@@ -13,22 +13,8 @@ export default function TimeForm() {
                 </label>
                 <input type="submit" />
             </form>
-            <button type="button" onClick={getMusic}>Click Me!</button> 
+            <button type="button">Click Me!</button> 
         </div>
     )
 }
 
-function getMusic(){
-    let spotify = new SpotifyWebApi();
-
-    spotify.setAccessToken(token); //Need token from musicFetch
-
-    spotify.getArtistAlbums('43ZHCT0cAZBISjO8DG9PnE').then(
-        function (data) {
-        console.log('Artist albums', data);
-        },
-        function (err) {
-        console.error(err);
-        }
-    );
-}

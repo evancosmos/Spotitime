@@ -1,14 +1,30 @@
-import secrets from './secrets.json'
-import { Express } from "express";
+const express = require('express');
+const querystring = require('querystring');
+const secrets = require('./secrets.json');
+
+const app = express();
+var cors = require('cors');
+
+app.use(cors());
+
+const port = 9000;
+
+app.listen(port, () => {
+  console.log(`listening on port ${port}`);
+})
+
+app.get('/api', (req, res) => {
+    res.status(200).send({
+        id: "2",
+        name: "john"
+    })
+})
 
 var client_id = secrets['Client ID'];
-var redirect_uri = 'http://localhost:3000/callback';
-
-var app = express();
+var redirect_uri = 'http://localhost:9000/callback';
 
 app.get('/login', function(req, res) {
 
-  var state = generateRandomString(16);
   var scope = 'user-read-private user-read-email';
 
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -16,8 +32,7 @@ app.get('/login', function(req, res) {
       response_type: 'code',
       client_id: client_id,
       scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
+      redirect_uri: redirect_uri
     }));
 });
 
@@ -46,4 +61,3 @@ app.get('/callback', function(req, res) {
       };
     }
   });
-  
