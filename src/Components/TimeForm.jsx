@@ -13,7 +13,6 @@ export default function TimeForm() {
                 </label>
                 <input type="submit" />
             </form>
-            <button type="button">Click Me!</button> 
         </div>
     )
 }

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import secrets from './secrets.json'
 import './App.css';
 import TimeForm from './Components/TimeForm';
-import axios from 'axios'
 import SpotifyWebApi from 'spotify-web-api-js';
+import getRandomSearch from './utils/randomId';
 
 function App() {
   const CLIENT_ID = secrets["Client ID"]
@@ -13,9 +13,8 @@ function App() {
   const spotify = new SpotifyWebApi();
 
   const [token, setToken] = useState("");
-  const [searchKey, setSearchKey] = useState("")
-  const [artists, setArtists] = useState([])
   const [username, setUsername] = useState("")
+  const [randSong, setRandomSong] = useState("")
 
   useEffect(() => {
     const hash = window.location.hash
@@ -29,37 +28,13 @@ function App() {
     }
 
     spotify.setAccessToken(token)
-    getUser()
     setToken(token)
-  }, [spotify])
+    getUser()
+  }, [])
 
   const logout = () => {
     setToken("")
     window.localStorage.removeItem("token")
-  }
-
-  const searchArtists = async (e) => {
-    e.preventDefault()
-    const {data} = await axios.get("https://api.spotify.com/v1/search", {
-        headers: {
-            Authorization: `Bearer ${token}`
-        },
-        params: {
-            q: searchKey,
-            type: "artist"
-        }
-    })
-
-    setArtists(data.artists.items)
-  }
-
-  const renderArtists = () => {
-    return artists.map(artist => (
-        <div key={artist.id}>
-            {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt=""/> : <div>No Image</div>}
-            {artist.name}
-        </div>
-    ))
   }
 
   const getUser = () => {
@@ -71,17 +46,27 @@ function App() {
 
   }
 
+  const randomSong = () => {
+    let randomId = getRandomSearch()
+    spotify.search(randomId, ["track"])
+      .then(
+        //(data) => console.log(data.tracks.items[0].name),
+        (data) => setRandomSong(data.tracks.items[0].name),
+        (err) => console.log(err)
+      )
+  }
+
   return (
     <div className="App">
 
-      <header className="App-header">
+      <div className="LoginBtn">
           {/*Depending on if token exists, either have a button to auth or a logout button to clear token*/}
           {
             !token ? 
             <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login to Spotify</a>
             : <button onClick={logout}>Logout</button>
           }
-      </header>
+      </div>
 
       <div className='WelcomeHead'>
         Welcome to Spotitime {username}
@@ -90,14 +75,10 @@ function App() {
         </div>
       </div>
       
-      <form onSubmit={searchArtists}>
-    <input type="text" onChange={e => setSearchKey(e.target.value)}/>
-    <button type={"submit"}>Search</button>
-    </form>
+      <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
+      {randSong}
 
       <TimeForm/>
-      {renderArtists()}
-
 
     </div>
   );
