@@ -5,6 +5,8 @@ import TimeForm from './Components/TimeForm';
 import SpotifyWebApi from 'spotify-web-api-js';
 import getRandomSearch from './utils/randomId';
 
+//TODO: Get songs to fill a duration, clean packagejson, split app into more components
+
 function App() {
   const CLIENT_ID = secrets["Client ID"]
   const REDIRECT_URI = "http://localhost:3000"
@@ -54,6 +56,15 @@ function App() {
         (data) => setRandomSong(data.tracks.items[0].name),
         (err) => console.log(err)
       )
+  }
+
+  const getSongsToTime = (durationMS) => {
+    while(durationMS > 0){
+      //Get a randomSong
+      //Add it to an array of songs
+      //Subtract the songs duration from durationMS
+    }
+    //Return Array
   }
 
   return (
