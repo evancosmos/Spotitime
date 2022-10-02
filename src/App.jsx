@@ -17,6 +17,7 @@ function App() {
   const [token, setToken] = useState("");
   const [username, setUsername] = useState("")
   const [randSong, setRandomSong] = useState("")
+  const [durSongs, setDurSongs] = useState([])
 
   useEffect(() => {
     const hash = window.location.hash
@@ -53,18 +54,37 @@ function App() {
     spotify.search(randomId, ["track"])
       .then(
         //(data) => console.log(data.tracks.items[0].name),
-        (data) => setRandomSong(data.tracks.items[0].name),
+        (data) => setRandomSong(data.tracks.items[0].duration_ms),
         (err) => console.log(err)
       )
   }
 
-  const getSongsToTime = (durationMS) => {
-    while(durationMS > 0){
-      //Get a randomSong
-      //Add it to an array of songs
-      //Subtract the songs duration from durationMS
+  const getSongsToTime = async (durationMS) => {
+    let innerDuration = 1000
+    let songArr = []
+    let tempCount = 4
+    
+    //I'd rather install a sink then use async
+    async function getTracks() {
+      while(tempCount > 0){
+        //Get a randomSong
+        let randomId = getRandomSearch()
+        const serchQuery = await spotify.search(randomId, ["track"])
+          .then(
+            (data) => {
+              //Add it to an array of songs
+              songArr.push(data.tracks.items[0].name)
+              //Subtract the songs duration from durationMS
+              innerDuration = innerDuration - data.tracks.items[0].duration_ms
+            },
+            (err) => console.log(err)
+          )
+          console.log(innerDuration)
+          tempCount -= 1
+      }
     }
-    //Return Array
+    await getTracks()
+    setDurSongs(songArr)
   }
 
   return (
@@ -90,6 +110,11 @@ function App() {
       {randSong}
 
       <TimeForm/>
+
+      <button type={"submit"} onClick={getSongsToTime}>Get array of songs for 1000000 ms</button>
+      {durSongs.map(item => 
+        <li>{item}</li>
+      )}
 
     </div>
   );
