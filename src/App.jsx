@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 
 //import TimeForm from './Components/TimeForm';
@@ -7,10 +7,10 @@ import LoggedOut from './Components/LoggedOut';
 import SpotifyWebApi from 'spotify-web-api-js';
 import getRandomSearch from './utils/randomId';
 
-//TODO: Get songs to fill a duration, clean packagejson, split app into more components, Add playlist/queue option, add hipster option
+//TODO: Fix await issues, Get songs to fill a more percise duration, clean packagejson, split app into more components, Add playlist/queue option, add hipster option
 
 function App() {
-  const spotify = new SpotifyWebApi();
+  const spotify = useMemo(() => new SpotifyWebApi(), []);
 
   const [token, setToken] = useState("");
   const [user, setUser] = useState("")
@@ -21,31 +21,32 @@ function App() {
 
   useEffect(() => {
     const hash = window.location.hash
-    let token = window.localStorage.getItem("token")
+    let tokenLocal = window.localStorage.getItem("token")
 
-    if (!token && hash) {
-        token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
+    if (!tokenLocal && hash) {
+        tokenLocal = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
 
         window.location.hash = ""
-        window.localStorage.setItem("token", token)
+        window.localStorage.setItem("token", tokenLocal)
     }
 
-    spotify.setAccessToken(token)
-    setToken(token)
-    getUser()
-  }, [])
+    spotify.setAccessToken(tokenLocal)
+    setToken(tokenLocal)
+
+    const getUser = () => {
+      spotify.getMe()
+      .then(
+        (data) => setUser(data),
+        (err) => console.log(err)
+      )
+    }
+    getUser();
+
+  }, [spotify])
 
   const logout = () => {
     setToken("")
     window.localStorage.removeItem("token")
-  }
-
-  const getUser = () => {
-    spotify.getMe()
-    .then(
-      (data) => setUser(data),
-      (err) => console.log(err)
-    )
   }
 
   const randomSong = () => {
@@ -68,7 +69,7 @@ function App() {
       while(innerDuration > 0){
         //Get a randomSong
         let randomId = getRandomSearch()
-        const serchQuery = await spotify.search(randomId, ["track"])
+        const searchQuery = await spotify.search(randomId, ["track"])
           .then(
             (data) => {
               //Add it to an array of songs
