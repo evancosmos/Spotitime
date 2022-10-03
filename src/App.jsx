@@ -13,9 +13,10 @@ function App() {
   const spotify = new SpotifyWebApi();
 
   const [token, setToken] = useState("");
-  const [username, setUsername] = useState("")
+  const [user, setUser] = useState("")
   const [randSong, setRandomSong] = useState("")
-  const [durSongs, setDurSongs] = useState([])
+  const [durSongs, setDurSongs] = useState([]) //This if for api
+  const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
   const [timeEntered, setTime] = useState(0);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ function App() {
   const getUser = () => {
     spotify.getMe()
     .then(
-      (data) => setUsername(data.display_name),
+      (data) => setUser(data),
       (err) => console.log(err)
     )
   }
@@ -59,7 +60,8 @@ function App() {
 
   const getSongsToTime = async () => {
     let innerDuration = timeEntered
-    let songArr = []
+    let songArrUri = []
+    let songArrName = []
     
     //I'd rather install a sink then use async
     async function getTracks() {
@@ -70,7 +72,8 @@ function App() {
           .then(
             (data) => {
               //Add it to an array of songs
-              songArr.push(data.tracks.items[0].name)
+              songArrUri.push(data.tracks.items[0].uri)
+              songArrName.push(data.tracks.items[0].name)
               //Subtract the songs duration from durationMS
               innerDuration = innerDuration - data.tracks.items[0].duration_ms
             },
@@ -79,7 +82,21 @@ function App() {
       }
     }
     await getTracks()
-    setDurSongs(songArr)
+    setNameSongs(songArrName)
+    setDurSongs(songArrUri)
+    makePlaylist()
+  }
+
+  const makePlaylist = () => {
+
+    spotify.createPlaylist(user.id, {"name": "Spotitime2022"})
+    .then(
+      (data) => {
+        //populate platlist with durSongs array
+        spotify.addTracksToPlaylist(data.id, durSongs)
+      },
+      (err) => console.log(err)
+    )
   }
 
   return (
@@ -92,7 +109,7 @@ function App() {
       </div>
 
       <div className='WelcomeHead'>
-        Welcome to Spotitime {username}
+        Welcome to Spotitime {user.display_name}
         <div className='WelcomeSub'>
           Enter in a time, and we'll make queue up music for that long
         </div>
@@ -110,7 +127,7 @@ function App() {
           </form>
       </div>
 
-      {durSongs.map(item => 
+      {nameSongs.map(item => 
         <li>{item}</li>
       )}
 
