@@ -15,7 +15,6 @@ function App() {
   const [token, setToken] = useState("");
   const [user, setUser] = useState("")
   const [randSong, setRandomSong] = useState("")
-  const [durSongs, setDurSongs] = useState([]) //This if for api
   const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
   const [timeEntered, setTime] = useState(0);
 
@@ -31,22 +30,32 @@ function App() {
     }
 
     spotify.setAccessToken(tokenLocal)
-    setToken(tokenLocal)
 
     const getUser = () => {
       spotify.getMe()
       .then(
-        (data) => setUser(data),
-        (err) => console.log(err)
+
+        //Token valid
+        (data) => {
+          setUser(data)
+          setToken(tokenLocal)
+        },
+
+        //Token is no longer valid
+        () => {
+          setToken("")
+          window.localStorage.removeItem("token")
+        }
       )
     }
     getUser();
 
-  }, [spotify])
+  }, [spotify, token])
 
   const logout = () => {
     setToken("")
     window.localStorage.removeItem("token")
+    setUser("")
   }
 
   const randomSong = () => {
@@ -64,37 +73,42 @@ function App() {
     let songArrUri = []
     let songArrName = []
     
-    //I'd rather install a sink then use async
     async function getTracks() {
       while(innerDuration > 0){
         //Get a randomSong
         let randomId = getRandomSearch()
-        const searchQuery = await spotify.search(randomId, ["track"])
+        let subDur = 0
+        await spotify.search(randomId, ["track"])
           .then(
             (data) => {
+              let item = data.tracks.items[0]
               //Add it to an array of songs
-              songArrUri.push(data.tracks.items[0].uri)
-              songArrName.push(data.tracks.items[0].name)
+              songArrUri.push(item.uri)
+              songArrName.push(item.name)
               //Subtract the songs duration from durationMS
-              innerDuration = innerDuration - data.tracks.items[0].duration_ms
+              subDur = item.duration_ms
             },
             (err) => console.log(err)
           )
+        innerDuration = innerDuration - subDur 
       }
     }
-    await getTracks()
-    setNameSongs(songArrName)
-    setDurSongs(songArrUri)
-    makePlaylist()
+
+    getTracks().then(
+      () => {
+        setNameSongs(songArrName)
+        makePlaylist(songArrUri)
+      }
+    )
   }
 
-  const makePlaylist = () => {
+  const makePlaylist = (songArrUris) => {
 
     spotify.createPlaylist(user.id, {"name": "Spotitime2022"})
     .then(
       (data) => {
         //populate platlist with durSongs array
-        spotify.addTracksToPlaylist(data.id, durSongs)
+        spotify.addTracksToPlaylist(data.id, songArrUris)
       },
       (err) => console.log(err)
     )
