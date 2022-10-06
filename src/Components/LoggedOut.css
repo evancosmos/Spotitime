@@ -1,0 +1,16 @@
+.LogInBtn {
+    color: black;
+    background-color: greenyellow;
+    padding: 20px;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.LogInBtn:hover{
+    background-color: green;
+}
+
+.LogInWrapper{
+    text-align: center;
+}

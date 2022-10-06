@@ -7,13 +7,13 @@
 
 .WelcomeHead{
   padding: 50px;
-  font-size: 32px;
+  font-size: 50px;
+  margin: auto;
+  width: 50%;
+  text-align: center;
 }
 
 .WelcomeSub{
+  margin: 10px;
   font-size: 16px;
-}
-
-.LoginBtn{
-  color: red;
 }

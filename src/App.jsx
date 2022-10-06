@@ -6,6 +6,7 @@ import LoggedOut from './Components/LoggedOut';
 
 import SpotifyWebApi from 'spotify-web-api-js';
 import getRandomSearch from './utils/randomId';
+import LoggedIn from './Components/LoggedIn';
 
 //TODO: Fix await issues, Get songs to fill a more percise duration, clean packagejson, split app into more components, Add playlist/queue option, add hipster option
 
@@ -43,6 +44,7 @@ function App() {
 
         //Token is no longer valid
         () => {
+          setUser("")
           setToken("")
           window.localStorage.removeItem("token")
         }
@@ -68,38 +70,32 @@ function App() {
       )
   }
 
-  const getSongsToTime = async () => {
+  const getSongsToTime = () => {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
-    
-    async function getTracks() {
-      while(innerDuration > 0){
-        //Get a randomSong
-        let randomId = getRandomSearch()
-        let subDur = 0
-        await spotify.search(randomId, ["track"])
-          .then(
-            (data) => {
-              let item = data.tracks.items[0]
-              //Add it to an array of songs
-              songArrUri.push(item.uri)
-              songArrName.push(item.name)
-              //Subtract the songs duration from durationMS
-              subDur = item.duration_ms
-            },
-            (err) => console.log(err)
-          )
-        innerDuration = innerDuration - subDur 
-      }
-    }
 
-    getTracks().then(
-      () => {
-        setNameSongs(songArrName)
-        makePlaylist(songArrUri)
-      }
-    )
+    let randomId = getRandomSearch()
+    
+    //Still only runs on second go
+    spotify.search(randomId, ["track"])
+      .then(
+        (data) => {
+          let item = data.tracks.items[0]
+          //Add it to an array of songs
+          songArrUri.push(item.uri)
+          songArrName.push(item.name)
+          //Subtract the songs duration from durationMS
+          innerDuration = innerDuration - item.duration_ms
+        },
+        (err) => console.log("token on error is " + token )
+      )
+      .then(
+        () => {
+          setNameSongs(songArrName)
+          makePlaylist(songArrUri)
+        }
+      )
   }
 
   const makePlaylist = (songArrUris) => {
@@ -119,17 +115,10 @@ function App() {
 
       <div className="LoginBtn">
           {//Depending on if token exists, either have a button to auth or a logout button to clear token
-            !token ? <LoggedOut/> : <button onClick={logout}>Logout</button>
+            !token ? <LoggedOut/> : <LoggedIn logoutFunc={logout} user={user}/>
           }
       </div>
 
-      <div className='WelcomeHead'>
-        Welcome to Spotitime {user.display_name}
-        <div className='WelcomeSub'>
-          Enter in a time, and we'll make queue up music for that long
-        </div>
-      </div>
-      
       <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
       {randSong}
 
@@ -143,7 +132,7 @@ function App() {
       </div>
 
       {nameSongs.map(item => 
-        <li>{item}</li>
+        <li key={nameSongs}>{item}</li>
       )}
 
     </div>
