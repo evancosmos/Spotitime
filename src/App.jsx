@@ -17,7 +17,6 @@ function App() {
   const [user, setUser] = useState("")
   const [randSong, setRandomSong] = useState("")
   const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
-  const [timeEntered, setTime] = useState(0);
 
   useEffect(() => {
     const hash = window.location.hash
@@ -32,27 +31,24 @@ function App() {
 
     spotify.setAccessToken(tokenLocal)
 
-    const getUser = () => {
-      spotify.getMe()
-      .then(
+    spotify.getMe()
+    .then(
 
-        //Token valid
-        (data) => {
-          setUser(data)
-          setToken(tokenLocal)
-        },
+      //Token valid
+      (data) => {
+        setUser(data)
+        setToken(tokenLocal)
+      },
 
-        //Token is no longer valid
-        () => {
-          setUser("")
-          setToken("")
-          window.localStorage.removeItem("token")
-        }
-      )
-    }
-    getUser();
-
-  }, [spotify, token])
+      //Token is no longer valid
+      () => {
+        setUser("")
+        setToken("")
+        window.localStorage.removeItem("token")
+      }
+    )
+    
+  }, [spotify])
 
   const logout = () => {
     setToken("")
@@ -70,7 +66,7 @@ function App() {
       )
   }
 
-  const getSongsToTime = () => {
+  const getSongsToTime = (timeEntered) => {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
@@ -78,17 +74,21 @@ function App() {
     let randomId = getRandomSearch()
     
     //Still only runs on second go
-    spotify.search(randomId, ["track"])
+    //NOTE url when working end with /?#, url when broken is just /#
+    spotify.searchTracks(randomId)
       .then(
         (data) => {
-          let item = data.tracks.items[0]
+          let item = data
           //Add it to an array of songs
           songArrUri.push(item.uri)
           songArrName.push(item.name)
           //Subtract the songs duration from durationMS
           innerDuration = innerDuration - item.duration_ms
         },
-        (err) => console.log("token on error is " + token )
+        (err) => {
+          console.log("token on error is " + token)
+          console.log(err)
+        }
       )
       .then(
         () => {
@@ -113,27 +113,23 @@ function App() {
   return (
     <div className="App">
 
+      <div className='WelcomeHead'>
+        Welcome to Spotitime {token ? user.display_name : ""}
+        <div className='WelcomeSub'>
+        Enter in a time, and we'll make you a playlist on your spotify account for exactly that long
+        </div>
+      </div>
+
       <div className="LoginBtn">
           {//Depending on if token exists, either have a button to auth or a logout button to clear token
-            !token ? <LoggedOut/> : <LoggedIn logoutFunc={logout} user={user}/>
+            !token ? 
+            <LoggedOut/> : 
+            <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs}/>
           }
       </div>
 
       <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
       {randSong}
-
-      <div className="form">
-          <form>
-              <label>Enter how many milliseconds to make the music:
-                  <input type="number" value={timeEntered} onChange={e => setTime(e.target.value)}/>
-              </label>
-              <button onClick={getSongsToTime}>Make me a list!</button>
-          </form>
-      </div>
-
-      {nameSongs.map(item => 
-        <li key={nameSongs}>{item}</li>
-      )}
 
     </div>
   );

@@ -11,16 +11,9 @@ export default function LoggedOut() {
 
   return (
     <div>
-      <div className='WelcomeHead'>
-          Welcome to Spotitime
-          <div className='WelcomeSub'>
-              Enter in a time, and we'll make you a playlist on your spotify account for exactly that long
-          </div>
+      <div className='LogInWrapper'>
+          <a className='LogInBtn' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>Login to Spotify</a>
       </div>
-
-    <div className='LogInWrapper'>
-        <a className='LogInBtn' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>Login to Spotify</a>
-    </div>
     </div>
   )
 }
