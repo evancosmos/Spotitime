@@ -17,3 +17,24 @@
   margin: 10px;
   font-size: 16px;
 }
+
+.SourceLink{
+    color: black;
+    background-color: greenyellow;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-bottom-right-radius: 25px;
+}
+
+.SourceLink:hover{
+  background-color: green;
+  cursor: pointer;
+}
+
+.SourceLinkWrapper{
+  text-align: center;
+}

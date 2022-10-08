@@ -73,29 +73,30 @@ function App() {
 
     let randomId = getRandomSearch()
     
-    //Still only runs on second go
-    //NOTE url when working end with /?#, url when broken is just /#
-    spotify.searchTracks(randomId)
-      .then(
-        (data) => {
-          let item = data
-          //Add it to an array of songs
-          songArrUri.push(item.uri)
-          songArrName.push(item.name)
-          //Subtract the songs duration from durationMS
-          innerDuration = innerDuration - item.duration_ms
-        },
-        (err) => {
-          console.log("token on error is " + token)
-          console.log(err)
-        }
-      )
-      .then(
-        () => {
-          setNameSongs(songArrName)
-          makePlaylist(songArrUri)
-        }
-      )
+    async function gettingTracks(){
+      while(innerDuration > 0){
+        let subDuration = 0
+        await spotify.search(randomId, ["track"])
+          .then(
+            (data) => {
+              let item = data.tracks.items[0]
+              songArrName.push(item.name)
+              songArrUri.push(item.uri)
+              subDuration = item.duration_ms
+            },
+            (err) => console.log(err)
+          )
+        
+        innerDuration = innerDuration - subDuration
+      }
+    }
+      
+    gettingTracks().then(
+      () => {
+        setNameSongs(songArrName)
+        makePlaylist(songArrUri)
+      }
+    )
   }
 
   const makePlaylist = (songArrUris) => {
@@ -112,6 +113,10 @@ function App() {
 
   return (
     <div className="App">
+
+      <div className='SourceLinkWrapper'>
+        <a className='SourceLink' href='https://github.com/evancosmos/Spotitime'>Source Code</a>
+      </div>
 
       <div className='WelcomeHead'>
         Welcome to Spotitime {token ? user.display_name : ""}

@@ -10,17 +10,18 @@ export default function LoggedIn(props) {
             <div className='LogOutBtn' onClick={() => props.logoutFunc()}>Logout</div>
 
             <div className="form">
-            <form>
-              <label>Enter how many seconds to make the playlist:
-                  <input type="number" value={timeEntered} onChange={e => setTime(e.target.value * 1000)}/>
+              <label>Enter how many milliseconds to make the playlist:
+                  <input type="number" value={timeEntered} onChange={e => setTime(e.target.value)}/>
               </label>
               <button onClick={() => props.makePlayListFunc(timeEntered)}>Make me a list!</button>
-            </form>
             </div>
 
-        {props.nameSongs.map(item => 
-            <li key={props.nameSongs}>{item}</li>
-        )}
+        <div>
+            {props.nameSongs.length > 0 ? "We've made a playlist on your account with the following songs:" : ""}
+            {props.nameSongs.map(item => 
+                <li key={props.nameSongs}>{item}</li>
+            )}
+        </div>
     </div>
     )
 }
