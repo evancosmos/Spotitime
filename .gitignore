@@ -21,3 +21,4 @@ yarn-debug.log*
 yarn-error.log*
 api/secrets.json
 src/secrets.json
+.firebase
