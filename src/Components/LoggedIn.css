@@ -18,3 +18,13 @@
 .form {
     text-align: center;
 }
+
+.Results {
+    margin: 20px;
+    text-align: center;
+}
+
+.ResultsItems {
+    text-align: center;
+    margin: 10px;
+}

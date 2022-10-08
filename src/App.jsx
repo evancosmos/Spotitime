@@ -15,7 +15,7 @@ function App() {
 
   const [token, setToken] = useState("");
   const [user, setUser] = useState("")
-  const [randSong, setRandomSong] = useState("")
+  //const [randSong, setRandomSong] = useState("")
   const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
 
   useEffect(() => {
@@ -56,7 +56,8 @@ function App() {
     setUser("")
   }
 
-  const randomSong = () => {
+  //Random Song Button
+/*   const randomSong = () => {
     let randomId = getRandomSearch()
     spotify.search(randomId, ["track"])
       .then(
@@ -66,15 +67,17 @@ function App() {
       )
   }
 
+  <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
+      {randSong} */
+
   const getSongsToTime = (timeEntered) => {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
-
-    let randomId = getRandomSearch()
     
     async function gettingTracks(){
       while(innerDuration > 0){
+        let randomId = getRandomSearch()
         let subDuration = 0
         await spotify.search(randomId, ["track"])
           .then(
@@ -132,9 +135,6 @@ function App() {
             <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs}/>
           }
       </div>
-
-      <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
-      {randSong}
 
     </div>
   );

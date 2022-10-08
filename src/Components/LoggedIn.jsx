@@ -16,10 +16,11 @@ export default function LoggedIn(props) {
               <button onClick={() => props.makePlayListFunc(timeEntered)}>Make me a list!</button>
             </div>
 
-        <div>
+        <div className='Results'>
             {props.nameSongs.length > 0 ? "We've made a playlist on your account with the following songs:" : ""}
+
             {props.nameSongs.map(item => 
-                <li key={props.nameSongs}>{item}</li>
+                <li className='ResultsItems' key={item}>{item}</li>
             )}
         </div>
     </div>
