@@ -8,7 +8,7 @@ import SpotifyWebApi from 'spotify-web-api-js';
 import getRandomSearch from './utils/randomId';
 import LoggedIn from './Components/LoggedIn';
 
-//TODO: Fix await issues, Get songs to fill a more percise duration, clean packagejson, split app into more components, Add playlist/queue option, add hipster option
+//TODO: Get songs to fill a more percise duration, clean packagejson, Add playlist/queue option, add hipster option
 
 function App() {
   const spotify = useMemo(() => new SpotifyWebApi(), []);
@@ -70,7 +70,7 @@ function App() {
   <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
       {randSong} */
 
-  const getSongsToTime = (timeEntered) => {
+  const getSongsToTime = (timeEntered) => { //Possible solution for exact timing: Once innerDur is neg, find a song in SongArr with duration equal to -innerDur and remove it. Only works well on long lists.
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []

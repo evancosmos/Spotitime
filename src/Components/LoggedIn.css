@@ -19,6 +19,14 @@
     text-align: center;
 }
 
+input[type=text] {
+    margin: 10px;
+    outline: none;
+    color: greenyellow;
+    background-color: black;
+    border-color: greenyellow;
+}
+
 .Results {
     margin: 20px;
     text-align: center;
@@ -27,4 +35,19 @@
 .ResultsItems {
     text-align: center;
     margin: 10px;
+}
+
+.makeListBtn{
+    color: black;
+    background-color: greenyellow;
+    padding: 10px;
+    margin: 10px;
+    text-decoration: none;
+    width: 200px;
+    display: inline-block;
+}
+
+.makeListBtn:hover{
+    background-color: green;
+    cursor: pointer;
 }

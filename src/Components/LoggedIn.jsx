@@ -3,17 +3,19 @@ import { useState } from 'react';
 import './LoggedIn.css'
 
 export default function LoggedIn(props) {
-    const [timeEntered, setTime] = useState(0);
+    const [minsEntered, setMins] = useState(0);
+    const [secsEntered, setSecs] = useState(0);
 
     return (
         <div>
             <div className='LogOutBtn' onClick={() => props.logoutFunc()}>Logout</div>
 
             <div className="form">
-              <label>Enter how many milliseconds to make the playlist:
-                  <input type="number" value={timeEntered} onChange={e => setTime(e.target.value)}/>
+              <label>Enter how long to make the playlist:
+                  <input type="text" value={minsEntered} placeholder="0" size="2" onChange={e => setMins(e.target.value)}/>Minutes
+                  <input type="text" value={secsEntered} placeholder="0" size="2" onChange={e => setSecs(e.target.value)}/>Seconds
               </label>
-              <button onClick={() => props.makePlayListFunc(timeEntered)}>Make me a list!</button>
+              <div className='makeListBtn' onClick={() => props.makePlayListFunc((parseInt(minsEntered) * 60 * 1000) + (parseInt(secsEntered) * 1000))}>Make me a list!</div>
             </div>
 
         <div className='Results'>
