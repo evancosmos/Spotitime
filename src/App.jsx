@@ -70,10 +70,15 @@ function App() {
   <button type={"submit"} onClick={randomSong}>Get a random spotitfy song</button>
       {randSong} */
 
-  const getSongsToTime = (timeEntered) => { //Possible solution for exact timing: Once innerDur is neg, find a song in SongArr with duration equal to -innerDur and remove it. Only works well on long lists.
+  const getSongsToTime = (timeEntered) => {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
+
+    //id of "short songs" playlist: 4VQfkbHBOMUfhy2394RqdP
+
+    //Use a dict to find which song to remove to fix duration
+    let songLenDict = {}
     
     async function gettingTracks(){
       while(innerDuration > 0){
@@ -85,6 +90,7 @@ function App() {
               let item = data.tracks.items[0]
               songArrName.push(item.name)
               songArrUri.push(item.uri)
+              songLenDict[item.name] = item
               subDuration = item.duration_ms
             },
             (err) => console.log(err)
@@ -96,6 +102,7 @@ function App() {
       
     gettingTracks().then(
       () => {
+        console.log(songLenDict)
         setNameSongs(songArrName)
         makePlaylist(songArrUri)
       }
