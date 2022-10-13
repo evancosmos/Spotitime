@@ -97,7 +97,6 @@ function App() {
               else{
                 songArrName.push(item.name)
                 songArrUri.push(item.uri)
-                songLenDict[item.name] = item
               }
             },
             (err) => console.log(err)
@@ -109,7 +108,6 @@ function App() {
       
     gettingTracks().then(
       () => {
-        //console.log(songLenDict)
         setPlaylistDur(timeEntered - innerDuration - errorAcum)
         setNameSongs(songArrName)
         makePlaylist(songArrUri)
