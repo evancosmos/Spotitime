@@ -14,7 +14,8 @@ function App() {
   const spotify = useMemo(() => new SpotifyWebApi(), []);
 
   const [token, setToken] = useState("");
-  const [user, setUser] = useState("")
+  const [user, setUser] = useState("");
+  const [playlistDur, setPlaylistDur] = useState(0);
   //const [randSong, setRandomSong] = useState("")
   const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
 
@@ -74,24 +75,30 @@ function App() {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
+    const maxErrorMS = 30000 // +/- Error Range for playlist length vs playlist requested length. Lower range means higher search time.
+    let errorAcum = 0;
 
     //id of "short songs" playlist: 4VQfkbHBOMUfhy2394RqdP
-
-    //Use a dict to find which song to remove to fix duration
-    let songLenDict = {}
     
     async function gettingTracks(){
-      while(innerDuration > 0){
+      while(innerDuration > maxErrorMS){
         let randomId = getRandomSearch()
         let subDuration = 0
         await spotify.search(randomId, ["track"])
           .then(
             (data) => {
               let item = data.tracks.items[0]
-              songArrName.push(item.name)
-              songArrUri.push(item.uri)
-              songLenDict[item.name] = item
               subDuration = item.duration_ms
+
+              if((innerDuration - subDuration) < (0-maxErrorMS)){
+                subDuration = 15000 //Subtracting innerDuration by 15seconds stops infinite loops
+                errorAcum += 15000
+              }
+              else{
+                songArrName.push(item.name)
+                songArrUri.push(item.uri)
+                songLenDict[item.name] = item
+              }
             },
             (err) => console.log(err)
           )
@@ -102,7 +109,8 @@ function App() {
       
     gettingTracks().then(
       () => {
-        console.log(songLenDict)
+        //console.log(songLenDict)
+        setPlaylistDur(timeEntered - innerDuration - errorAcum)
         setNameSongs(songArrName)
         makePlaylist(songArrUri)
       }
@@ -111,7 +119,7 @@ function App() {
 
   const makePlaylist = (songArrUris) => {
 
-    spotify.createPlaylist(user.id, {"name": "Spotitime2022"})
+    spotify.createPlaylist(user.id, {"name": "Spotitime - Musical Timer"})
     .then(
       (data) => {
         //populate platlist with durSongs array
@@ -131,7 +139,7 @@ function App() {
       <div className='WelcomeHead'>
         Welcome to Spotitime {token ? user.display_name : ""}
         <div className='WelcomeSub'>
-        Enter in a time, and we'll make you a playlist on your spotify account for exactly that long
+        Enter in a time, and we'll make you a playlist on your spotify account for about that long
         </div>
       </div>
 
@@ -139,7 +147,7 @@ function App() {
           {//Depending on if token exists, either have a button to auth or a logout button to clear token
             !token ? 
             <LoggedOut/> : 
-            <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs}/>
+            <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs} playlistDur={playlistDur}/>
           }
       </div>
 

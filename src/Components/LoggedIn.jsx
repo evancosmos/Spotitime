@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import './LoggedIn.css'
 
 export default function LoggedIn(props) {
     const [minsEntered, setMins] = useState(0);
     const [secsEntered, setSecs] = useState(0);
+
+    const [minsDis, setMinsDis] = useState(0);
+    const [secsDis, setSecsDis] = useState(0);
+
+    useEffect(() => {
+        let timeIn = props.playlistDur
+
+        setMinsDis(Math.floor((timeIn/1000)/60))
+        setSecsDis(Math.floor((timeIn/1000) % 60))
+    }, [props.playlistDur])
 
     return (
         <div>
@@ -19,7 +29,7 @@ export default function LoggedIn(props) {
             </div>
 
         <div className='Results'>
-            {props.nameSongs.length > 0 ? "We've made a playlist on your account with the following songs:" : ""}
+            {props.nameSongs.length > 0 ? "We've made a playlist of length " + minsDis + " mins " + secsDis + " seconds on your account with the following songs:" : ""}
 
             {props.nameSongs.map(item => 
                 <li className='ResultsItems' key={item}>{item}</li>
