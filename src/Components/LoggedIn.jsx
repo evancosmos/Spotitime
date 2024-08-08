@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
+import { Bars } from 'react-loader-spinner';
 import './LoggedIn.css'
 
 export default function LoggedIn(props) {
@@ -8,6 +9,7 @@ export default function LoggedIn(props) {
 
     const [minsDis, setMinsDis] = useState(0);
     const [secsDis, setSecsDis] = useState(0);
+
 
     useEffect(() => {
         let timeIn = props.playlistDur
@@ -29,11 +31,17 @@ export default function LoggedIn(props) {
             </div>
 
         <div className='Results'>
-            {props.nameSongs.length > 0 ? "We've made a playlist of length " + minsDis + " mins " + secsDis + " seconds on your account with the following songs:" : ""}
+            {props.nameSongs.length > 0 ? "We've made a playlist of length " + minsDis + " mins " + secsDis + " seconds on your account with the following songs:" : 
+                <Bars height="80" width="80" color="#4fa94d" ariaLabel="bars-loading" wrapperStyle={{}} wrapperClass="" visible={true}/>
+            }
 
             {props.nameSongs.map(item => 
                 <li className='ResultsItems' key={item}>{item}</li>
             )}
+
+            <div>
+                {props.albArt.map((imgSrc) => (<img src={imgSrc} alt="Album Art N/A"/>))}
+            </div>
         </div>
     </div>
     )

@@ -17,7 +17,8 @@ function App() {
   const [user, setUser] = useState("");
   const [playlistDur, setPlaylistDur] = useState(0);
   //const [randSong, setRandomSong] = useState("")
-  const [nameSongs, setNameSongs] = useState([]) //This is for display info in web app
+  const [nameSongs, setNameSongs] = useState([])
+  const [albumArt, setAlbumArt] = useState([])
 
   useEffect(() => {
     const hash = window.location.hash
@@ -75,6 +76,7 @@ function App() {
     let innerDuration = timeEntered
     let songArrUri = []
     let songArrName = []
+    let songAlbumArt = []
     const maxErrorMS = 30000 // +/- Error Range for playlist length vs playlist requested length. Lower range means higher search time.
     let errorAcum = 0;
 
@@ -94,9 +96,10 @@ function App() {
                 subDuration = 15000 //Subtracting innerDuration by 15seconds stops infinite loops
                 errorAcum += 15000
               }
-              else{
+              else{ //Here's where valid song data is added
                 songArrName.push(item.name)
                 songArrUri.push(item.uri)
+                songAlbumArt.push(item.album.images[0].url)
               }
             },
             (err) => console.log(err)
@@ -111,6 +114,7 @@ function App() {
         setPlaylistDur(timeEntered - innerDuration - errorAcum)
         setNameSongs(songArrName)
         makePlaylist(songArrUri)
+        setAlbumArt(songAlbumArt)
       }
     )
   }
@@ -145,7 +149,7 @@ function App() {
           {//Depending on if token exists, either have a button to auth or a logout button to clear token
             !token ? 
             <LoggedOut/> : 
-            <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs} playlistDur={playlistDur}/>
+            <LoggedIn logoutFunc={logout} makePlayListFunc={getSongsToTime} user={user} nameSongs={nameSongs} albArt={albumArt} playlistDur={playlistDur}/>
           }
       </div>
 
