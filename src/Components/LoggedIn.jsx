@@ -99,8 +99,9 @@ export default function LoggedIn(props) {
             </div>
 
         <div className='Results'>
-            {songData.length > 0 ? "We've made a playlist of length " + minsDis + " mins " + secsDis + " seconds on your spotify account with the following songs:" : <span/> }
-
+            <span className='ResultsHeader'>
+                {songData.length > 0 ? "We've made a playlist of length " + minsDis + " mins " + secsDis + " seconds on your spotify account with the following songs:" : <span/> }
+            </span>
             {songData.map(item =>
                 <li key={item[0]}>
                 <SingleTrack albumArtURI={item[1]} songName={item[0]}/>

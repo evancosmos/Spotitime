@@ -30,8 +30,12 @@ input[type=text] {
 .Results {
     margin: 20px;
     text-align: center;
-    border: 5px;
-    border-color: greenyellow;
+}
+
+.ResultsHeader {
+    padding: 10px;
+    text-decoration: underline;
+    color: whitesmoke;
 }
 
 .ResultsItems {
