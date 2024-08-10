@@ -1,0 +1,19 @@
+#songWrapper{
+    clear: left;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+#albArt{
+    width: 10vw;
+    aspect-ratio: 1/1;
+    float: left;
+}
+
+#songName{
+    float: left;
+    overflow: hidden;
+    padding-left: 20px;
+    font-size: 30px;
+}

@@ -4,7 +4,7 @@ import './LoggedOut.css'
 
 export default function LoggedOut() {
   const CLIENT_ID = secrets["Client ID"]
-  const REDIRECT_URI = "https://spotitime-ce99f.web.app/"
+  const REDIRECT_URI = "http://localhost:3000/"
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
   const RESPONSE_TYPE = "token"
   const SCOPE = "playlist-modify-private playlist-modify-public"

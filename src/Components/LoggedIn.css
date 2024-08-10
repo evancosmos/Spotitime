@@ -30,6 +30,8 @@ input[type=text] {
 .Results {
     margin: 20px;
     text-align: center;
+    border: 5px;
+    border-color: greenyellow;
 }
 
 .ResultsItems {
@@ -50,4 +52,9 @@ input[type=text] {
 .makeListBtn:hover{
     background-color: green;
     cursor: pointer;
+}
+
+.loadingBars{
+    justify-content: center;
+    align-items: center;
 }
